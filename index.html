@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5ed">
+  <meta name="description" content="FreshPlate helps you plan meals around the ingredients you already have, use food before it expires, and keep a simple grocery list.">
+  <meta property="og:title" content="FreshPlate — Make the most of what's in your kitchen">
+  <meta property="og:description" content="A calm, practical pantry and meal planner that lives in your browser.">
+  <title>FreshPlate — Your kitchen, in good rhythm</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#today" aria-label="FreshPlate home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>freshplate<span class="brand-dot">.</span></span>
+      </a>
+      <p class="nav-caption">YOUR KITCHEN</p>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-link is-active" type="button" data-view-target="today"><span class="nav-icon">⌂</span>Today</button>
+        <button class="nav-link" type="button" data-view-target="pantry"><span class="nav-icon">▤</span>My pantry<span class="nav-count" id="pantryNavCount">0</span></button>
+        <button class="nav-link" type="button" data-view-target="planner"><span class="nav-icon">▦</span>Meal planner</button>
+        <button class="nav-link" type="button" data-view-target="shopping"><span class="nav-icon">✓</span>Grocery list<span class="nav-count" id="shoppingNavCount">0</span></button>
+      </nav>
+      <div class="sidebar-note">
+        <span class="leaf-icon" aria-hidden="true">✳</span>
+        <p><strong>A little less waste.</strong><br>A lot more good food.</p>
+        <small>YOUR KITCHEN COMPANION</small>
+      </div>
+      <div class="privacy-note"><span class="privacy-dot"></span> Saved on this device</div>
+    </aside>
+
+    <div class="main-column">
+      <header class="topbar">
+        <div>
+          <p class="top-date mono" id="todayDate"></p>
+          <p class="top-kicker">A calmer way to feed your week</p>
+        </div>
+        <div class="top-actions">
+          <button class="button button-soft" type="button" id="openPantryButton"><span aria-hidden="true">＋</span> Add ingredients</button>
+          <div class="avatar" aria-label="FreshPlate user">FP</div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <section class="app-view is-visible" id="view-today" data-view="today">
+          <div class="welcome-banner">
+            <div class="welcome-copy">
+              <p class="eyebrow">YOUR KITCHEN, IN GOOD RHYTHM</p>
+              <h1>Make this week<br><span>taste good.</span></h1>
+              <p>Start with what you already have. Fresh ideas, less food left behind.</p>
+              <button class="button button-primary" type="button" data-view-target="planner">Plan my meals <span aria-hidden="true">↗</span></button>
+            </div>
+            <div class="welcome-art" aria-hidden="true">
+              <div class="art-sun"></div><div class="art-leaf leaf-one"></div><div class="art-leaf leaf-two"></div>
+              <div class="art-bowl"><span>🥗</span></div><div class="art-spark spark-one">✳</div><div class="art-spark spark-two">✳</div>
+              <span class="art-label">FRESH, SIMPLE, YOURS</span>
+            </div>
+            <div class="banner-index mono">FP / 01</div>
+          </div>
+
+          <div class="stat-row" aria-label="Kitchen overview">
+            <article class="stat-card"><span class="stat-icon stat-green">▤</span><div><p class="stat-label">IN YOUR PANTRY</p><strong id="pantryStat">0 items</strong><small>Ready when you are</small></div></article>
+            <article class="stat-card"><span class="stat-icon stat-orange">◷</span><div><p class="stat-label">USE SOON</p><strong id="expiringStat">0 items</strong><small>Check these first</small></div></article>
+            <article class="stat-card"><span class="stat-icon stat-purple">▦</span><div><p class="stat-label">MEALS PLANNED</p><strong id="plannedStat">0 this week</strong><small>One day at a time</small></div></article>
+          </div>
+
+          <div class="content-grid">
+            <section class="panel expiring-panel">
+              <div class="panel-heading"><div><p class="section-label">A LITTLE NUDGE</p><h2>Use these soon</h2></div><button class="text-button" type="button" data-view-target="pantry">View pantry <span aria-hidden="true">↗</span></button></div>
+              <p class="panel-intro">A quick look at what may need your attention.</p>
+              <div class="expiring-list" id="expiringList"></div>
+              <div class="empty-inline" id="expiringEmpty" hidden><span>✳</span><p>Your pantry is looking clear.</p></div>
+            </section>
+
+            <section class="panel today-pick-panel">
+              <div class="panel-heading"><div><p class="section-label">A GOOD PLACE TO START</p><h2>Today's pick</h2></div><span class="tiny-badge">FROM YOUR PANTRY</span></div>
+              <div id="todayPick"></div>
+            </section>
+          </div>
+
+          <section class="recipe-section">
+            <div class="panel-heading"><div><p class="section-label">GOOD THINGS, RIGHT HERE</p><h2>Made for what you have</h2></div><button class="text-button" type="button" data-view-target="planner">See weekly plan <span aria-hidden="true">↗</span></button></div>
+            <p class="panel-intro">Recipe ideas are ranked by how many of your pantry ingredients they use.</p>
+            <div class="recipe-grid" id="recipeSuggestions"></div>
+          </section>
+        </section>
+
+        <section class="app-view" id="view-pantry" data-view="pantry" hidden>
+          <div class="page-heading"><div><p class="eyebrow">YOUR SHELVES, AT A GLANCE</p><h1>My pantry<span>.</span></h1><p>Add what you have and we'll help you keep an eye on it.</p></div><span class="page-illustration" aria-hidden="true">🥬</span></div>
+          <div class="pantry-layout">
+            <section class="panel pantry-form-panel">
+              <div class="panel-heading"><div><p class="section-label">ADD SOMETHING</p><h2>New ingredient</h2></div><span class="form-spark" aria-hidden="true">✳</span></div>
+              <form id="pantryForm" class="stacked-form">
+                <label>Ingredient name<input id="ingredientName" name="name" type="text" placeholder="e.g. Baby spinach" maxlength="50" required></label>
+                <div class="form-two-col">
+                  <label>Quantity<input name="quantity" type="number" min="0.1" step="0.1" placeholder="1" required></label>
+                  <label>Unit<select name="unit"><option>piece</option><option>g</option><option>kg</option><option>ml</option><option>l</option><option>pack</option><option>can</option><option>bunch</option></select></label>
+                </div>
+                <div class="form-two-col">
+                  <label>Category<select name="category"><option>Produce</option><option>Dairy & eggs</option><option>Grains & pantry</option><option>Protein</option><option>Other</option></select></label>
+                  <label>Best before<input name="expiresAt" type="date"></label>
+                </div>
+                <button class="button button-primary full-button" type="submit">Add to pantry <span aria-hidden="true">＋</span></button>
+              </form>
+              <p class="form-footnote">Your list stays in this browser on this device.</p>
+            </section>
+            <section class="panel pantry-list-panel">
+              <div class="panel-heading pantry-list-heading"><div><p class="section-label">IN YOUR KITCHEN</p><h2><span id="pantryHeadingCount">0</span> ingredients</h2></div><label class="search-box"><span aria-hidden="true">⌕</span><input id="pantrySearch" type="search" placeholder="Find an ingredient" aria-label="Find an ingredient"></label></div>
+              <div class="filter-row"><button type="button" class="filter-chip is-selected" data-category-filter="All">All</button><button type="button" class="filter-chip" data-category-filter="Produce">Produce</button><button type="button" class="filter-chip" data-category-filter="Dairy & eggs">Dairy & eggs</button><button type="button" class="filter-chip" data-category-filter="Grains & pantry">Pantry</button><button type="button" class="filter-chip" data-category-filter="Protein">Protein</button></div><p class="sample-note">Example ingredients are preloaded so you can explore the app. Remove them and add your own to make this pantry yours.</p>
+              <div class="pantry-list" id="pantryList"></div>
+              <div class="empty-panel" id="pantryEmpty" hidden><span>🥣</span><h3>Your pantry starts here.</h3><p>Add a few ingredients and FreshPlate will find ideas to match.</p><button class="text-button" type="button" id="emptyAddButton">Add your first ingredient ↗</button></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="app-view" id="view-planner" data-view="planner" hidden>
+          <div class="page-heading"><div><p class="eyebrow">A FLEXIBLE PLAN, MADE BY YOU</p><h1>Meal planner<span>.</span></h1><p>Choose one meal for each day. Plans can change; dinner shouldn't feel like homework.</p></div><span class="page-illustration" aria-hidden="true">🍋</span></div>
+          <div class="planner-toolbar"><div><span class="week-dot"></span><span id="weekLabel">THIS WEEK</span></div><p>Pick a recipe for a day, then add missing items to your grocery list.</p></div>
+          <div class="week-grid" id="weekGrid"></div>
+          <section class="recipe-section planner-recipes"><div class="panel-heading"><div><p class="section-label">IDEAS FROM YOUR PANTRY</p><h2>Choose a recipe</h2></div></div><div class="recipe-grid" id="plannerRecipes"></div></section>
+        </section>
+
+        <section class="app-view" id="view-shopping" data-view="shopping" hidden>
+          <div class="page-heading"><div><p class="eyebrow">A SIMPLE LIST FOR THE NEXT SHOP</p><h1>Grocery list<span>.</span></h1><p>Add the missing bits from a meal plan or jot down whatever you need.</p></div><span class="page-illustration" aria-hidden="true">🛒</span></div>
+          <div class="shopping-layout">
+            <section class="panel shopping-panel">
+              <div class="panel-heading"><div><p class="section-label">YOUR NEXT SHOP</p><h2>Things to pick up</h2></div><span class="shopping-count" id="shoppingProgress">0 left</span></div>
+              <form class="shopping-form" id="shoppingForm"><label class="sr-only" for="shoppingName">Add a grocery item</label><input id="shoppingName" name="name" type="text" maxlength="60" placeholder="Add something to your list…" required><button class="button button-primary" type="submit">Add <span aria-hidden="true">＋</span></button></form>
+              <div class="shopping-groups" id="shoppingGroups"></div>
+              <div class="empty-panel shopping-empty" id="shoppingEmpty" hidden><span>🧺</span><h3>All caught up.</h3><p>Your grocery list is clear for now.</p></div>
+            </section>
+            <aside class="shop-tip"><span class="shop-tip-icon">✳</span><p class="section-label">A SMALL TIP</p><h2>Shop your pantry first.</h2><p>When you add a recipe to your meal plan, FreshPlate can put the missing ingredients right on this list.</p><button class="text-button" type="button" data-view-target="planner">Plan a meal <span aria-hidden="true">↗</span></button></aside>
+          </div>
+        </section>
+      </main>
+
+      <footer class="main-footer"><span>FreshPlate <span class="footer-dot">✳</span> A little more good food, a little less waste.</span><span>Saved on this device · No account needed</span></footer>
+    </div>
+  </div>
+
+  <dialog class="recipe-dialog" id="recipeDialog" aria-labelledby="dialogTitle">
+    <button class="dialog-close" id="dialogClose" type="button" aria-label="Close recipe">×</button>
+    <div class="dialog-visual" id="dialogVisual" aria-hidden="true"></div>
+    <div class="dialog-content"><p class="section-label" id="dialogMeta"></p><h2 id="dialogTitle"></h2><p class="dialog-description" id="dialogDescription"></p><div class="dialog-ingredients" id="dialogIngredients"></div><div class="dialog-method" id="dialogMethod"></div><div class="dialog-actions"><button class="button button-primary" id="dialogPlanButton" type="button">Add to this week <span aria-hidden="true">↗</span></button><button class="button button-outline" id="dialogShopButton" type="button">Add missing items</button></div><p class="dialog-note">Recipe ideas are suggestions. Adjust ingredients and cooking steps to suit your needs.</p></div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
+
+
